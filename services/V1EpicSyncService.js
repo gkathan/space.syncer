@@ -109,7 +109,10 @@ function _enrichEpics(epics,progress,approved){
 // eg {_oid\u003dScope:10461}
 function _parseObjectID(name){
 	var _id;
-	_id =name.split("}")[0].split(":")[1];
+	var _split1 = name.split("}")[0];
+	if (_split1){
+		_id =_split1.split(":")[1];
+	}
 	return _id;
 }
 
