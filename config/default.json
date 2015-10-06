@@ -1,0 +1,155 @@
+{
+	"env" : "default",
+
+    "debug": true,
+
+    "timezone": "UTC",
+
+    "locale": "en",
+
+    "version" : "0.5 alpha",
+
+    "build" : "---should be dynamically assigned",
+
+	"logger": {
+		"dev":{
+			"console":{
+				"colorize":true,
+				"prettyPrint":true,
+				"showLevel":true,
+				"timestamp":true,
+				"level":"debug"
+			},
+		    "DailyRotateFile":{
+				"filename": "logs/spaceAPIserver.log" ,
+				"prettyPrint":true,
+				"showLevel":true,
+				"level":"debug",
+				"colorize":false
+			}
+		}
+	},
+
+	"gulp":{
+		"baseDir" : "./",
+		"remoteBaseDir" :"/home/cactus/",
+		"deployTarget" :"pi",
+		"deployTargetPort" :22,
+		"deployTargetEnv": "development"
+	},
+
+
+
+
+	"availability":{
+		"coreTime":[
+			{"dayOfWeek":6,"start":"12:00:00","stop":"23:59:59"},
+			{"dayOfWeek":0,"start":"00:00:00","stop":"00:59:59"},
+			{"dayOfWeek":0,"start":"12:00:00","stop":"23:59:59"},
+			{"dayOfWeek":1,"start":"00:00:00","stop":"00:59:59"},
+			{"dayOfWeek":1,"start":"16:00:00","stop":"23:59:59"},
+			{"dayOfWeek":2,"start":"16:00:00","stop":"23:59:59"},
+			{"dayOfWeek":3,"start":"16:00:00","stop":"23:59:59"},
+			{"dayOfWeek":4,"start":"16:00:00","stop":"23:59:59"},
+			{"dayOfWeek":5,"start":"16:00:00","stop":"23:59:59"}
+		]
+	},
+
+
+  "v1" : {
+		"url" : "http://v1.bwinparty.corp/V1-Production/",
+		"proxy" : "http://knbnprxy.ea.bwinparty.corp/rest/epics"
+	},
+
+
+	"emit": {
+		"snow_incidents_new": "on",
+		"snow_incidents_new_exclude_businessservices":"Workplace",
+		"snow_incidents_changes": "on",
+		"snow_incidents_changes_exclude_businessservices":"Workplace",
+		"space_messages" : "on"
+	},
+
+	"sync": {
+		"v1epics" : {
+			"mode": "on",
+			"intervalMinutes" :60,
+			"url" : ["http://knbnprxy.ea.bwinparty.corp/rest/epicsprogress","http://knbnprxy.ea.bwinparty.corp/rest/epics"]
+		},
+		"v1data" : {
+			"mode": "on",
+			"intervalMinutes" :60,
+			"url" : ["http://knbnprxy.ea.bwinparty.corp/rest/members","http://knbnprxy.ea.bwinparty.corp/rest/teams","http://knbnprxy.ea.bwinparty.corp/rest/backlogs","http://knbnprxy.ea.bwinparty.corp/rest/programs"]
+		},
+		"mockup" : {
+			"mode": "off",
+			"intervalMinutes" :1
+		},
+
+		"availability" : {
+			"mode": "on",
+			"intervalMinutes" :60,
+			"url" : ["http://avreport.bwinparty.corp/API/AvReoprtingService.svc/getYTDDatapoint","http://avreport.bwinparty.corp/API/AvReoprtingService.svc/GetAVGraphDatapoints"]
+		},
+		"incidents" : {
+			"mode": "on",
+			"intervalMinutes" :60 	,
+			"includePriority" : 4,
+			"url" : "https://bwinparty.service-now.com/incident_list.do?JSONv2&sysparm_action=getRecords"
+		},
+
+
+
+		"soc_outages" : {
+			"mode": "on",
+			"intervalMinutes" :60,
+			"url" : "http://avreport.bwinparty.corp/API/AvReportingService.svc/GetIncidentsDatapoints/?from=2014-01-01"
+		},
+
+		"soc_services" : {
+			"mode": "off",
+			"intervalMinutes" :3600,
+			"url" : "http://avreport.bwinparty.corp/API/AvReportingService.svc/GetServicesDatapoints"
+		},
+
+
+		"problems" : {
+			"mode": "on",
+			"intervalMinutes" :60 	,
+			"url" : "https://bwinparty.service-now.com/problem_list.do?JSONv2&sysparm_action=getRecords&sysparm_query="
+		},
+		"apm" : {
+			"login" :{
+				"mode": "off",
+				"intervalMinutes" :5,
+				"url" : "https://apm.bwinparty.corp/controller/rest/applications/bwin.party/metric-data",
+				"timimg" : "&time_range_type=BEFORE_NOW&duration-in-mins=5",
+				"metricPath" : "Business%20Transaction%20Performance%7CBusiness%20Transactions%7CPosApi/v3%7CAuthenticationService.Login%7CAverage%20Response%20Time%20%28ms%29"
+			}
+		}
+	},
+
+
+
+    "database": {
+        "type" : "mongo",
+        "db": "space",
+        "host" : "localhost:27017"
+     },
+
+     "api" : {
+		"url" :"/api/space/rest/"
+	},
+
+
+		"mappings" :{
+				"snow" :{
+					"priority":[{"sys":1,"bpty":"P01 - Critical"},{"sys":2,"bpty":"P08 - High"},{"sys":3,"bpty":"P16 - Moderate"},{"sys":4,"bpty":"P40 - Low"}],
+					"state":[{"sys":1,"bpty":"New"},{"sys":2,"bpty":"In Progress"},{"sys":3,"bpty":"Closed"},{"sys":8,"bpty":"Awaiting"},{"sys":9,"bpty":"Resolved"}]
+				}
+		}
+
+
+
+
+}

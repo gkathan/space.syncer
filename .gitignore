@@ -1,0 +1,12 @@
+access.log
+build
+dist
+doc
+log
+node_modules
+temp
+.git
+*.build
+config/secret.json
+change.log
+!.gitignore
