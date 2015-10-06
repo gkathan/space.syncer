@@ -61,8 +61,14 @@
 		"proxy" : "http://knbnprxy.ea.bwinparty.corp/rest/epics"
 	},
 
+	"backlogscapacity":{
+		"defaultAverageAvailablePDperMonth":16.8,
+		"defaultAvailablePercentageForInitiatives":0.6,
+		"defaultProductiveWorkRatio":0.9
+	},
 
 	"emit": {
+		"snow_incidents_prios":["P01","P08"],
 		"snow_incidents_new": "on",
 		"snow_incidents_new_exclude_businessservices":"Workplace",
 		"snow_incidents_changes": "on",
@@ -79,7 +85,7 @@
 		"v1data" : {
 			"mode": "on",
 			"intervalMinutes" :60,
-			"url" : ["http://knbnprxy.ea.bwinparty.corp/rest/members","http://knbnprxy.ea.bwinparty.corp/rest/teams","http://knbnprxy.ea.bwinparty.corp/rest/backlogs","http://knbnprxy.ea.bwinparty.corp/rest/programs"]
+		  "url" : ["http://knbnprxy.ea.bwinparty.corp/rest/members","http://knbnprxy.ea.bwinparty.corp/rest/teams","http://knbnprxy.ea.bwinparty.corp/rest/backlogs","http://knbnprxy.ea.bwinparty.corp/rest/programs"]
 		},
 		"mockup" : {
 			"mode": "off",
@@ -89,7 +95,7 @@
 		"availability" : {
 			"mode": "on",
 			"intervalMinutes" :60,
-			"url" : ["http://avreport.bwinparty.corp/API/AvReoprtingService.svc/getYTDDatapoint","http://avreport.bwinparty.corp/API/AvReoprtingService.svc/GetAVGraphDatapoints"]
+			"url" : ["http://avreport.bwinparty.corp/API/AvReportingService.svc/getYTDDatapoint","http://avreport.bwinparty.corp/API/AvReportingService.svc/GetAVGraphDatapoints"]
 		},
 		"incidents" : {
 			"mode": "on",
@@ -97,9 +103,6 @@
 			"includePriority" : 4,
 			"url" : "https://bwinparty.service-now.com/incident_list.do?JSONv2&sysparm_action=getRecords"
 		},
-
-
-
 		"soc_outages" : {
 			"mode": "on",
 			"intervalMinutes" :60,

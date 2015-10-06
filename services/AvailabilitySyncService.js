@@ -21,6 +21,8 @@ var db = mongojs(connection_string, [DB]);
 var winston = require('winston');
 var logger = winston.loggers.get('space_log');
 
+var spaceServices = require('space.services');
+
 var _syncName = "availability";
 
 exports.init = _init;
@@ -44,7 +46,7 @@ function _init(io,callback){
 
 function _sync(urls,type,io,callback){
 
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
 	var _statusSUCCESS = "[SUCCESS]";
@@ -82,7 +84,6 @@ function _sync(urls,type,io,callback){
 			// parsed response body as js object
 			var _endpoint = _.last(urls[1].split("/"));
 			logger.debug("...get data..: endpoint: "+_endpoint);
-			logger.debug(data);
 			try{
 				avData[_endpoint]=JSON.parse(data);
 			}

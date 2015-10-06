@@ -1,5 +1,5 @@
 {
-	"env" : "default",
+	"env" : "PRODUCTION",
 
     "debug": true,
 
@@ -21,54 +21,13 @@
 				"level":"debug"
 			},
 		    "DailyRotateFile":{
-				"filename": "logs/spaceAPIserver.log" ,
+				"filename": "logs/space.syncer.log" ,
 				"prettyPrint":true,
 				"showLevel":true,
 				"level":"debug",
 				"colorize":false
 			}
 		}
-	},
-
-	"gulp":{
-		"baseDir" : "./",
-		"remoteBaseDir" :"/home/cactus/",
-		"deployTarget" :"pi",
-		"deployTargetPort" :22,
-		"deployTargetEnv": "development"
-	},
-
-
-
-
-	"availability":{
-		"coreTime":[
-			{"dayOfWeek":6,"start":"12:00:00","stop":"23:59:59"},
-			{"dayOfWeek":0,"start":"00:00:00","stop":"00:59:59"},
-			{"dayOfWeek":0,"start":"12:00:00","stop":"23:59:59"},
-			{"dayOfWeek":1,"start":"00:00:00","stop":"00:59:59"},
-			{"dayOfWeek":1,"start":"16:00:00","stop":"23:59:59"},
-			{"dayOfWeek":2,"start":"16:00:00","stop":"23:59:59"},
-			{"dayOfWeek":3,"start":"16:00:00","stop":"23:59:59"},
-			{"dayOfWeek":4,"start":"16:00:00","stop":"23:59:59"},
-			{"dayOfWeek":5,"start":"16:00:00","stop":"23:59:59"}
-		]
-	},
-
-
-  "v1" : {
-		"url" : "http://v1.bwinparty.corp/V1-Production/",
-		"proxy" : "http://knbnprxy.ea.bwinparty.corp/rest/epics"
-	},
-
-
-	"emit": {
-		"snow_incidents_prios":["P01","P08"],
-		"snow_incidents_new": "on",
-		"snow_incidents_new_exclude_businessservices":"Workplace",
-		"snow_incidents_changes": "on",
-		"snow_incidents_changes_exclude_businessservices":"Workplace",
-		"space_messages" : "on"
 	},
 
 	"sync": {
@@ -90,7 +49,7 @@
 		"availability" : {
 			"mode": "on",
 			"intervalMinutes" :60,
-			"url" : ["http://avreport.bwinparty.corp/API/AvReoprtingService.svc/getYTDDatapoint","http://avreport.bwinparty.corp/API/AvReoprtingService.svc/GetAVGraphDatapoints"]
+			"url" : ["http://avreport.bwinparty.corp/API/AvReportingService.svc/getYTDDatapoint","http://avreport.bwinparty.corp/API/AvReportingService.svc/GetAVGraphDatapoints"]
 		},
 		"incidents" : {
 			"mode": "on",

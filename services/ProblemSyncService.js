@@ -15,6 +15,8 @@ var moment = require('moment');
 var winston = require('winston');
 var logger = winston.loggers.get('space_log');
 
+var spaceServices = require('space.services');
+
 var _syncName = "problems";
 
 exports.init = function(io,callback){
@@ -39,7 +41,7 @@ exports.sync = _syncProblem;
 function _syncProblem(url,type,io,callback){
 	logger.debug("**** _syncProblem, url: "+url);
 
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
 	var _statusSUCCESS = "[SUCCESS]";

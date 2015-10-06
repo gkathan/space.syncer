@@ -41,7 +41,7 @@ exports.init = function(io,callback){
 exports.sync = _sync;
 
 function _sync(url,type,io,callback){
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
 	var _statusSUCCESS = "[SUCCESS]";
@@ -128,14 +128,14 @@ function _sync(url,type,io,callback){
 								// update the IncidentTracker
 								//1) NEW: incident will increment the "incídenttracker_openedAt" daily value for the according priority
 								if (_incidentsDIFF.NEW.length>0){
-									_handleIncidentsNEW(_incidentsDIFF.NEW);
+									_handleIncidentsNEW(_incidentsDIFF.NEW,io);
 								}
 								else {
 									logger.debug("[NO NEW INCIDENT] _incidentsDIFF.NEW.length==0");
 								}
 								// we have to check whether the state has changed (and accordingly the either "resolvedAt" or "closedAt") collections
 								if (_incidentsDIFF.CHANGED.length>0){
-									_handleIncidentsCHANGED(_incidentsDIFF.CHANGED,baseline,_incidentsNEW);
+									_handleIncidentsCHANGED(_incidentsDIFF.CHANGED,baseline,_incidentsNEW,io);
 								}
 								//3) final stuff
 								var _message=_incidentsNEW.length+" incidents (active==true) synced - NEW: "+_incidentsDIFF.NEW.length +" | CHANGED: "+_incidentsDIFF.NEW.length;
@@ -332,7 +332,7 @@ function _handleClosedIncidents(deltaIds,type,callback){
 /**
  insert the NEW incidents !
 */
-function _handleIncidentsNEW(incidents){
+function _handleIncidentsNEW(incidents,io){
 	var prios = ["P01","P08","P16","P120"];
 
 	incService.insert(incidents,function(err,success){
@@ -349,7 +349,7 @@ function _handleIncidentsNEW(incidents){
 						for (var i in incidents){
 							//only notify those which are configured in config.emit.snow_incidents_prios
 							if (config.emit.snow_incidents_prios.indexOf(incidents[i].priority.split(" - ")[0])>-1){
-								_emitNEWIncidentMessage(incidents[i]);
+								_emitNEWIncidentMessage(incidents[i],io);
 							}
 						}
 					}
@@ -365,7 +365,7 @@ function _handleIncidentsNEW(incidents){
  	+ so we need to first grab all changed incidents from the baseline and pack them into the CHANGED array for the update of incidents
 		"CHANGED" : [{"id" : "INC123721","sysId" : "0080c2380f8c8a4052fb0eece1050e8e","diff" : {
 */
-function _handleIncidentsCHANGED(changes,baseline,_incidentsNEW){
+function _handleIncidentsCHANGED(changes,baseline,_incidentsNEW,io){
 	var prios = ["P01","P08","P16","P120"];
 	logger.debug("[CHANGED INCIDENT] _incidentsDIFF.CHANGED.length = "+changes.length);
 	var _updateIncidents = [];
@@ -398,7 +398,7 @@ function _handleIncidentsCHANGED(changes,baseline,_incidentsNEW){
 		_updateIncidents.push(_inc);
 		if (config.emit.snow_incidents_changes =="on"){
 			if (config.emit.snow_incidents_prios.indexOf(_inc.priority.split(" - ")[0])>-1){
-				_emitCHANGEIncidentMessage(_diff,_inc);
+				_emitCHANGEIncidentMessage(_diff,_inc,io);
 			}
 		}
 	}
@@ -421,7 +421,7 @@ function _handleIncidentsCHANGED(changes,baseline,_incidentsNEW){
 }
 
 
-function _emitNEWIncidentMessage(incident){
+function _emitNEWIncidentMessage(incident,io){
 	var _newincident = incident;
 	var _message={};
 	var _type;
@@ -440,7 +440,7 @@ function _emitNEWIncidentMessage(incident){
 }
 
 
-function _emitCHANGEIncidentMessage(change,incident){
+function _emitCHANGEIncidentMessage(change,incident,io){
 	var _message={};
 	var _type;
 	var _prio=_getPrio(incident);
@@ -494,7 +494,7 @@ function _getTimeStringForTimeRange(start,stop){
 
 
 function _getSnowData(url,type,callback){
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
 	var _statusSUCCESS = "[SUCCESS]";

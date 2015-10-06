@@ -6,6 +6,8 @@ var config = require('config');
 var schedule = require('node-schedule');
 var _ = require('lodash');
 
+var spaceServices = require('space.services');
+
 var io;
 
 var mongojs = require("mongojs");
@@ -31,7 +33,7 @@ function _init(io,name,callback){
 			logger.debug('...going to sync '+name+'  stuff ....');
 			var _url = config.sync[name].url;
 			var _type = "scheduled - automatic";
-			_sync(name,_url,_type,callback);
+			_sync(name,_url,_type,io,callback);
 		});
 	}
 }
@@ -44,11 +46,11 @@ function _init(io,name,callback){
 * param prepareData: function pointer to map / prepare data before save in local DB
 * param callback
 */
-function _sync(name,url,type,callback){
+function _sync(name,url,type,io,callback){
 
 	var syncData={};
 
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _syncName = name;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";

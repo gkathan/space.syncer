@@ -39,7 +39,7 @@ exports.init = function(io,callback){
 function _sync(url,type,io,callback){
 	logger.debug("**** _syncV1Epics, url: "+url);
 
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
 	var _statusSUCCESS = "[SUCCESS]";

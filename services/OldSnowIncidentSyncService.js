@@ -13,6 +13,8 @@ var DB="space";
 var connection_string = '127.0.0.1:27017/'+DB;
 var db = mongojs(connection_string, [DB]);
 
+var spaceServices = require('space.services');
+
 var jsondiffpatch=require('jsondiffpatch');
 // logger
 var winston = require('winston');
@@ -64,7 +66,7 @@ function _syncIncident(url,done){
 		logger.debug("arguments.callee.name: "+arguments.callee.name);
 		logger.debug("[_syncIncident]...get data..: _url:"+url);
 
-		var incService = require('./IncidentService');
+		var incService = spaceServices.IncidentService;
 		//var incidents =  db.collection('incidents');
 		//var incidentsdelta =  db.collection('incidentsdelta');
     var _incidentsNEW=[];

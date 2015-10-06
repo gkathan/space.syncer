@@ -17,12 +17,13 @@ var _syncName = "v1data";
 
 var spaceServices = require('space.services');
 
-var v1Service = spaceServicesV1Service;
+var v1Service = spaceServices.V1Service;
 var async = require('async');
 
 exports.sync = _sync;
 
 exports.init = function(io,callback){
+
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
 	rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
@@ -39,9 +40,9 @@ exports.init = function(io,callback){
 
 
 function _sync(url,type,io,callback){
-	logger.debug("**** _syncV1Data, url: "+url);
+	logger.debug("*********************** _syncV1Data, url: "+url);
 
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
 	var _statusSUCCESS = "[SUCCESS]";
@@ -76,13 +77,13 @@ function _sync(url,type,io,callback){
 					_data = _enrichBacklogData(_data,backlogscapacity);
 				}
 
-				_enrichBacklogData
+
 
 				v1data.drop();
 				v1data.insert(_data, function(err , success){
 					//console.log('Response success '+success);
 					if (err) callback(err);
-					logger.debug(">>>> DONE ???? "+_collection);
+					logger.debug(">>>> DONE ???? "+_collection+ " - inserted: "+_data.length+" items");
 					done();
 				});
 			})

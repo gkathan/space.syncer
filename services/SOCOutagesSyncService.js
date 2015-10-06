@@ -17,6 +17,8 @@ var logger = winston.loggers.get('space_log');
 
 var _syncName = "soc_outages";
 
+var spaceServices = require('space.services');
+
 exports.init = _init;
 exports.sync=_sync;
 
@@ -38,7 +40,7 @@ function _init(io,callback){
 }
 
 function _sync(url,type,io,callback){
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
 	var _statusSUCCESS = "[SUCCESS]";
@@ -46,7 +48,7 @@ function _sync(url,type,io,callback){
 
 
 	var socOutages;
-	var incService = require('./IncidentService');
+	var incService = spaceServices.IncidentService;
 
 	var Client = require('node-rest-client').Client;
 	var _options = {};

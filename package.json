@@ -21,7 +21,7 @@
   "node-schedule": "^0.1.16",
   "npmlog": "^1.0.0",
   "socket.io": "^1.3.5",
-  "space.services": "^1.0.13",
+  "space.services": "^1.1.0",
   "underscore.nest": "^0.1.1",
   "winston": "^0.9.0"
 

@@ -27,19 +27,72 @@ var http = require('http');
     });
     server.listen(8001);
 
-var sockets=[];
+//var sockets=[];
 
 var io = require('socket.io')(server);
 
+io.on('connection', function (socket) {
 
 
-
-io.sockets.on('connection', function (socket) {
     logger.debug('[s p a c e syncer|server socket.io] says: new user connected!');
-    io.emit("message","[s p a c e.syncer] says: hello :-)");
-    io.sockets.on('disconnect',function(){
+    socket.emit("message","[s p a c e.syncer] says: hello :-)");
+
+
+    socket.on('forceSync',function(message){
+      logger.debug("[s p a c e syncer|server socket.io] says: someone sent a forceSync message - syncer: "+message.syncer);
+      var _syncer = message.syncer;
+      var _url = config.sync[_syncer].url;
+      var _type = "manual - forced"
+      switch(_syncer){
+        case "v1epics":
+          v1EpicSyncService.sync(_url,_type,io,function(err,result){
+            if (!err) logger.debug("successful: "+_syncer);
+          });
+          break;
+        case "v1data":
+          v1DataSyncService.sync(_url,_type,io,function(err,result){
+            if (!err) logger.debug("successful: "+_syncer);
+          });
+          break;
+        case "availability":
+          avSyncService.sync(_url,_type,io,function(err,result){
+            if (!err) logger.debug("successful: "+_syncer);
+          });
+          break;
+        case "incidents":
+          incidentSyncService.sync(_url,_type,io,function(err,result){
+            if (!err) logger.debug("successful: "+_syncer);
+          });
+          break;
+        case "problems":
+          problemSyncService.sync(_url,_type,io,function(err,result){
+            if (!err) logger.debug("successful: "+_syncer);
+          });
+          break;
+        case "soc_outages":
+          soc_outagesSyncService.sync(_url,_type,io,function(err,result){
+            if (!err) logger.debug("successful: "+_syncer);
+          });
+          break;
+        case "soc_services":
+          soc_servicesSyncService.sync("soc_services",_url,_type,io,function(err,result){
+            if (!err) logger.debug("successful: "+_syncer);
+          });
+          break;
+
+      }
+
+
+    })
+
+    socket.on('message',function(message){
+      logger.debug("[s p a c e syncer|server socket.io] says: someone sent a MESSAGE message : ");
+    })
+
+    socket.on('disconnect',function(){
       logger.debug("[s p a c e syncer|server socket.io] says: someone disconnected")
     })
+
 });
 
 
