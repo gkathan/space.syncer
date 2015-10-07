@@ -6,6 +6,8 @@ var config = require('config');
 var schedule = require('node-schedule');
 var _ = require('lodash');
 
+var spaceServices = require('space.services');
+
 
 // logger
 var winston = require('winston');
@@ -28,7 +30,7 @@ function _init(io,callback){
 			_sync(name,io,callback);
 		});
 	// and immediatly a sync
-	_sync(name,io,callback);
+		_sync(name,io,callback);
 	}
 }
 
@@ -44,7 +46,7 @@ function _sync(name,io,callback){
 
 	var syncData={};
 
-	var _syncStatus = require('./SyncService');
+	var _syncStatus = spaceServices.SyncService;
 	var _syncName = name;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
@@ -57,8 +59,14 @@ function _sync(name,io,callback){
 
 				var _message = {status:_statusSUCCESS,from:_syncName,timestamp:_timestamp,info:_message,type:"mockup"};
 				logger.info("[MockupSyncSerice] emit: "+JSON.stringify(_message));
-
 				io.emit('syncUpdate', _message);
+
+				/*
+				var _prio="P120";
+				var _incdientFakeMessage={title:"mockup incident",body:"holy shit something went wrong !!!"};
+				_incdientFakeMessage.desktop={desktop:true,icon:"/images/incidents/"+_prio+".png"};
+				io.emit('message', {msg:_incdientFakeMessage});
+				*/
 
 	callback(null,"syncData");
 

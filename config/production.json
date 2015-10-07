@@ -7,9 +7,15 @@
 
     "locale": "en",
 
-    "version" : "0.5 alpha",
+    "version" : "1.0 beta",
 
     "build" : "---should be dynamically assigned",
+
+	  "proxy" :{
+              "host":"atvt1xismt002.apz.unix",
+              "port":3128,
+              "tunnel":true
+          },
 
 	"logger": {
 		"dev":{
@@ -48,7 +54,7 @@
 
 		"availability" : {
 			"mode": "on",
-			"intervalMinutes" :60,
+			"intervalMinutes" :30,
 			"url" : ["http://avreport.bwinparty.corp/API/AvReportingService.svc/getYTDDatapoint","http://avreport.bwinparty.corp/API/AvReportingService.svc/GetAVGraphDatapoints"]
 		},
 		"incidents" : {
@@ -57,22 +63,16 @@
 			"includePriority" : 4,
 			"url" : "https://bwinparty.service-now.com/incident_list.do?JSONv2&sysparm_action=getRecords"
 		},
-
-
-
 		"soc_outages" : {
 			"mode": "on",
 			"intervalMinutes" :10,
 			"url" : "http://avreport.bwinparty.corp/API/AvReportingService.svc/GetIncidentsDatapoints/?from=2014-01-01"
 		},
-
 		"soc_services" : {
 			"mode": "off",
 			"intervalMinutes" :3600,
 			"url" : "http://avreport.bwinparty.corp/API/AvReportingService.svc/GetServicesDatapoints"
 		},
-
-
 		"problems" : {
 			"mode": "on",
 			"intervalMinutes" :30 	,
@@ -91,13 +91,13 @@
 
 
 
-    "database": {
-        "type" : "mongo",
-        "db": "space",
-        "host" : "localhost:27017"
-     },
+  "database": {
+    "type" : "mongo",
+    "db": "space",
+    "host" : "localhost:27017"
+ },
 
-     "api" : {
+  "api" : {
 		"url" :"/api/space/rest/"
 	},
 

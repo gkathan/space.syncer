@@ -10,3 +10,4 @@ temp
 config/secret.json
 change.log
 !.gitignore
+config/sslcert

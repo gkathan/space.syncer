@@ -12,24 +12,51 @@ winston.loggers.add('space.syncer_log',_loggerconfig);
 var logger = winston.loggers.get('space.syncer_log');
 
 
-
-
-
 logger.info("[s p a c e syncer]  - server initializes...");
 
 var http = require('http');
+var https = require('https');
 
-    var server = http.createServer(function(req,res){
-      res.writeHead(200, {'Content-Type': 'application/json'});
+var port = config.server.port;
+var portssl = config.server.portSSL;
 
-      res.write(JSON.stringify(config.sync));
-      res.end();
-    });
-    server.listen(8001);
+var server = http.createServer(function(req,res){
+  res.writeHead(200, {'Content-Type': 'application/json'});
+
+  res.write(JSON.stringify(config.sync));
+  res.end();
+});
+server.listen(config.server.port);
+
+
+/**
+* SSL certificates
+*/
+var fs = require('fs');
+var privateKey = fs.readFileSync('config/sslcert/server.key');
+var certificate = fs.readFileSync('config/sslcert/server.crt');
+var ca = fs.readFileSync('config/sslcert/ca.crt');
+var credentials = {key: privateKey, cert: certificate,ca:ca,requestCert:true,rejectUnauthorized: false};
+
+
+var server_https = https.createServer(credentials,function(req,res){
+
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Request-Method', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+	res.setHeader('Access-Control-Allow-Headers', '*');
+
+  res.write(JSON.stringify(config.sync));
+  res.end();
+});
+
+server_https.listen(config.server.portSSL);
+
 
 //var sockets=[];
 
-var io = require('socket.io')(server);
+var io = require('socket.io')(server_https);
 
 io.on('connection', function (socket) {
 
@@ -79,10 +106,7 @@ io.on('connection', function (socket) {
             if (!err) logger.debug("successful: "+_syncer);
           });
           break;
-
       }
-
-
     })
 
     socket.on('message',function(message){

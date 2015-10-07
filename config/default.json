@@ -7,7 +7,7 @@
 
     "locale": "en",
 
-    "version" : "0.5 alpha",
+    "version" : "1.0 beta",
 
     "build" : "---should be dynamically assigned",
 
@@ -21,13 +21,17 @@
 				"level":"debug"
 			},
 		    "DailyRotateFile":{
-				"filename": "logs/spaceAPIserver.log" ,
+				"filename": "logs/space.syncer.log" ,
 				"prettyPrint":true,
 				"showLevel":true,
 				"level":"debug",
 				"colorize":false
 			}
 		}
+	},
+	"server":{
+		"port":3001,
+		"portSSL":3444
 	},
 
 	"gulp":{
@@ -88,7 +92,7 @@
 		  "url" : ["http://knbnprxy.ea.bwinparty.corp/rest/members","http://knbnprxy.ea.bwinparty.corp/rest/teams","http://knbnprxy.ea.bwinparty.corp/rest/backlogs","http://knbnprxy.ea.bwinparty.corp/rest/programs"]
 		},
 		"mockup" : {
-			"mode": "off",
+			"mode": "on",
 			"intervalMinutes" :1
 		},
 
