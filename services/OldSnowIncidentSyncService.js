@@ -22,15 +22,15 @@ var logger = winston.loggers.get('space_log');
 
 
 exports.init = function(io){
-	this.io=io;
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync.incident.intervalMinutes);
-	logger.info("[s p a c e] OldSnowIncidentSyncService init(): "+config.sync.oldsnowincident.intervalMinutes+" minutes - mode: "+config.sync.oldsnowincident.mode);
-	if (config.sync.oldsnowincident.mode!="off"){
+	var _url = config.sync.oldsnowincident.url;
+
+	if (config.sync.oldsnowincident.mode=="on"){
+		rule.minute = new schedule.Range(0, 59, config.sync.incident.intervalMinutes);
+		logger.info("[s p a c e] OldSnowIncidentSyncService init(): "+config.sync.oldsnowincident.intervalMinutes+" minutes - mode: "+config.sync.oldsnowincident.mode);
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync OldSNowIncident stuff ....');
-			var _url = config.sync.oldsnowincident.url;
 
 			_syncIncident(_url,function(data){
 				logger.debug("** [DONE] oldSNowIncidentSync ");

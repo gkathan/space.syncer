@@ -22,9 +22,9 @@ exports.init = function(io,callback){
 	this.io=io;
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync.apm.login.intervalMinutes);
-	logger.info("[s p a c e] ApmSyncService init(): "+config.sync.apm.login.intervalMinutes+" minutes - mode: "+config.sync.apm.login.mode);
 	if (config.sync.apm.login.mode!="off"){
+		rule.minute = new schedule.Range(0, 59, config.sync.apm.login.intervalMinutes);
+		logger.info("[s p a c e] ApmSyncService init(): "+config.sync.apm.login.intervalMinutes+" minutes - mode: "+config.sync.apm.login.mode);
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync Apm LOGIN stuff ....');
 

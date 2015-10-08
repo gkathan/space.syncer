@@ -31,11 +31,11 @@ exports.sync=_sync;
 function _init(io,callback){
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
-	logger.info("[s p a c e] AvailabilitySyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode );
 	var _type = "scheduled - automatic";
 	var _urls = config.sync[_syncName].url;
-	if (config.sync[_syncName].mode!="off"){
+	if (config.sync[_syncName].mode=="on"){
+		rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
+		logger.info("[s p a c e] AvailabilitySyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode );
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync Availability stuff ....');
 			_sync(_urls,_type,io,callback);
@@ -72,6 +72,7 @@ function _sync(urls,type,io,callback){
 		//logger.debug(data);
 		try{
 			avData[_endpoint]=JSON.parse(data);
+			logger.debug("--------------- AV sync data[0] OK");
 		}
 		catch(err){
 			logger.error("exception "+err);
@@ -86,6 +87,7 @@ function _sync(urls,type,io,callback){
 			logger.debug("...get data..: endpoint: "+_endpoint);
 			try{
 				avData[_endpoint]=JSON.parse(data);
+				logger.debug("--------------- AV sync data[1] OK");
 			}
 			catch(err){
 				logger.error("exception "+err);
@@ -95,6 +97,7 @@ function _sync(urls,type,io,callback){
 				return;
 			}
 			// and store it
+			logger.debug("--------------- AV sync trying to store....");
 			var availability =  db.collection('availability');
 			availability.drop();
 			availability.insert({createDate:new Date(),avReport:avData}	 , function(err , success){
@@ -107,7 +110,7 @@ function _sync(urls,type,io,callback){
 				}
 				if(success){
 					var _message = "AV Data synced";
-					logger.info("sync availability [DONE]");
+					logger.info("------------- sync availability [DONE]");
 					_syncStatus.saveLastSync(_syncName,_timestamp,_message,_statusSUCCESS,type);
 					io.emit('syncUpdate', {status:"[SUCCESS]",from:_syncName,timestamp:_timestamp,info:"avData synced",type:type});
 					callback(null,avData);

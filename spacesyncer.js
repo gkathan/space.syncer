@@ -15,55 +15,27 @@ var logger = winston.loggers.get('space.syncer_log');
 logger.info("[s p a c e syncer]  - server initializes...");
 
 var http = require('http');
-var https = require('https');
-
 var port = config.server.port;
-var portssl = config.server.portSSL;
 
 var server = http.createServer(function(req,res){
-  res.writeHead(200, {'Content-Type': 'application/json'});
-
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Request-Method', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+	res.setHeader('Access-Control-Allow-Headers', '*');
   res.write(JSON.stringify(config.sync));
   res.end();
 });
 server.listen(config.server.port);
 
 
-/**
-* SSL certificates
-*/
-var fs = require('fs');
-var privateKey = fs.readFileSync('config/sslcert/server.key');
-var certificate = fs.readFileSync('config/sslcert/server.crt');
-var ca = fs.readFileSync('config/sslcert/ca.crt');
-var credentials = {key: privateKey, cert: certificate,ca:ca,requestCert:true,rejectUnauthorized: false};
-
-
-var server_https = https.createServer(credentials,function(req,res){
-
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Request-Method', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-	res.setHeader('Access-Control-Allow-Headers', '*');
-
-  res.write(JSON.stringify(config.sync));
-  res.end();
-});
-
-server_https.listen(config.server.portSSL);
-
-
 //var sockets=[];
 
-var io = require('socket.io')(server_https);
+var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
-
-
     logger.debug('[s p a c e syncer|server socket.io] says: new user connected!');
     socket.emit("message","[s p a c e.syncer] says: hello :-)");
-
 
     socket.on('forceSync',function(message){
       logger.debug("[s p a c e syncer|server socket.io] says: someone sent a forceSync message - syncer: "+message.syncer);
@@ -109,10 +81,11 @@ io.on('connection', function (socket) {
       }
     })
 
-    socket.on('message',function(message){
-      logger.debug("[s p a c e syncer|server socket.io] says: someone sent a MESSAGE message : ");
-    })
-
+  socket.on('message',function(message){
+    logger.debug("[s p a c e syncer|server socket.io] says: someone sent a MESSAGE message : ");
+    socket.emit('message',message);
+    socket.broadcast.emit('message',message);
+  })
     socket.on('disconnect',function(){
       logger.debug("[s p a c e syncer|server socket.io] says: someone disconnected")
     })

@@ -26,10 +26,11 @@ exports.init = function(io,callback){
 
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
-	logger.info("[s p a c e] V1DataSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode);
 	var _type = "scheduled - automatic";
-	if (config.sync[_syncName].mode!="off"){
+	if (config.sync[_syncName].mode=="on"){
+		rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
+		logger.info("[s p a c e] V1DataSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode);
+
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync V1 Data ....');
 			_sync(config.sync[_syncName].url,_type,io,callback);

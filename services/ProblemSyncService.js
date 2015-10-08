@@ -20,14 +20,14 @@ var spaceServices = require('space.services');
 var _syncName = "problems";
 
 exports.init = function(io,callback){
-	this.io=io;
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
-	logger.info("[s p a c e] ProblemSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode);
 	var _url = config.sync[_syncName].url;
 	var _type = "scheduled - automatic";
-	if (config.sync.problems.mode!="off"){
+	if (config.sync.problems.mode=="off"){
+		rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
+		logger.info("[s p a c e] ProblemSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode);
+
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync Problem stuff ....');
 			_syncProblem(_url,_type,io,callback);

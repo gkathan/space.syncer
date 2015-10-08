@@ -26,9 +26,10 @@ var Client = require('node-rest-client').Client;
 exports.init = function(io,callback){
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
-	logger.info("[s p a c e] IncidentSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode);
-	if (config.sync[_syncName].mode!="off"){
+	if (config.sync[_syncName].mode=="on"){
+		rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
+		logger.info("[s p a c e] IncidentSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode);
+
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync Incident stuff ....');
 			var _url = config.sync[_syncName].url;

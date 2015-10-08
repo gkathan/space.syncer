@@ -27,13 +27,13 @@ exports.sync=_sync;
 function _init(io,callback){
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
-	logger.info("[s p a c e] SOCOutagesSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode );
+	var _url = config.sync[_syncName].url;
+	var _type = "scheduled - automatic";
 	if (config.sync[_syncName].mode!="off"){
+		rule.minute = new schedule.Range(0, 59, config.sync[_syncName].intervalMinutes);
+		logger.info("[s p a c e] SOCOutagesSyncService init(): "+config.sync[_syncName].intervalMinutes+" minutes - mode: "+config.sync[_syncName].mode );
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync SOCOutages stuff ....');
-			var _url = config.sync[_syncName].url;
-			var _type = "scheduled - automatic";
 			_sync(_url,_type,io,callback);
 		});
 	}

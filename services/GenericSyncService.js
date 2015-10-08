@@ -23,16 +23,16 @@ exports.init = _init;
 exports.sync=_sync;
 
 function _init(io,name,callback){
-	this.io=io;
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync[name].intervalMinutes);
-	logger.info("[s p a c e] GenericSyncService for: "+name+" init(): "+config.sync[name].intervalMinutes+" minutes - mode: "+config.sync[name].mode );
+	var _url = config.sync[name].url;
+	var _type = "scheduled - automatic";
 	if (config.sync[name].mode!="off"){
+		rule.minute = new schedule.Range(0, 59, config.sync[name].intervalMinutes);
+		logger.info("[s p a c e] GenericSyncService for: "+name+" init(): "+config.sync[name].intervalMinutes+" minutes - mode: "+config.sync[name].mode );
+
 		var j = schedule.scheduleJob(rule, function(){
 			logger.debug('...going to sync '+name+'  stuff ....');
-			var _url = config.sync[name].url;
-			var _type = "scheduled - automatic";
 			_sync(name,_url,_type,io,callback);
 		});
 	}

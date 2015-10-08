@@ -20,10 +20,12 @@ function _init(io,callback){
 	name="mockup";
 	var rule = new schedule.RecurrenceRule();
 	// every 10 minutes
-	rule.minute = new schedule.Range(0, 59, config.sync[name].intervalMinutes);
-	logger.info("[s p a c e] MockupSyncService for: "+name+" init(): "+config.sync[name].intervalMinutes+" minutes - mode: "+config.sync[name].mode );
-	if (config.sync[name].mode!="off"){
+	if (config.sync[name].mode=="on"){
+		rule.minute = new schedule.Range(0, 59, config.sync[name].intervalMinutes);
+		logger.info("[s p a c e] MockupSyncService for: "+name+" init(): "+config.sync[name].intervalMinutes+" minutes - mode: "+config.sync[name].mode );
+
 		var j = schedule.scheduleJob(rule, function(){
+
 			logger.debug('...going to sync '+name+'  stuff ....');
 			var _url = config.sync[name].url;
 			var _type = "scheduled - automatic";
@@ -43,7 +45,6 @@ function _init(io,callback){
 * param callback
 */
 function _sync(name,io,callback){
-
 	var syncData={};
 
 	var _syncStatus = spaceServices.SyncService;
@@ -61,12 +62,12 @@ function _sync(name,io,callback){
 				logger.info("[MockupSyncSerice] emit: "+JSON.stringify(_message));
 				io.emit('syncUpdate', _message);
 
-				/*
+
 				var _prio="P120";
-				var _incdientFakeMessage={title:"mockup incident",body:"holy shit something went wrong !!!"};
+				var _incdientFakeMessage={title:"mockup incident",body:"a mockup test notification from s p a c e "};
 				_incdientFakeMessage.desktop={desktop:true,icon:"/images/incidents/"+_prio+".png"};
 				io.emit('message', {msg:_incdientFakeMessage});
-				*/
+
 
 	callback(null,"syncData");
 
