@@ -37,6 +37,10 @@ io.on('connection', function (socket) {
     logger.debug('[s p a c e syncer|server socket.io] says: new user connected!');
     socket.emit("message","[s p a c e.syncer] says: hello :-)");
 
+    var connected = io.sockets.connected;
+	  clientsCount = Object.keys(connected).length;
+    logger.debug("number of connections: "+clientsCount);
+
     socket.on('forceSync',function(message){
       logger.debug("[s p a c e syncer|server socket.io] says: someone sent a forceSync message - syncer: "+message.syncer);
       var _syncer = message.syncer;
@@ -88,11 +92,21 @@ io.on('connection', function (socket) {
     })
     socket.on('heartbeat',function(message){
       logger.debug("[s p a c e syncer|server socket.io] says: someone sent a HEARTBEAT: "+message);
+
+
+      var connected = io.sockets.connected;
+  	  clientsCount = Object.keys(connected).length;
+      logger.debug("number of connections: "+clientsCount);
+
       socket.emit('heartbeat',"space.syncer ALIVE");
+      //socket.removeListener('heartbeat');
     })
 
     socket.on('disconnect',function(){
       logger.debug("[s p a c e syncer|server socket.io] says: someone disconnected")
+      var connected = io.sockets.connected;
+  	  clientsCount = Object.keys(connected).length;
+      logger.debug("number of connections: "+clientsCount);
     })
 
 });
