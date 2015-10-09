@@ -81,11 +81,16 @@ io.on('connection', function (socket) {
       }
     })
 
-  socket.on('message',function(message){
-    logger.debug("[s p a c e syncer|server socket.io] says: someone sent a MESSAGE message : ");
-    socket.emit('message',message);
-    socket.broadcast.emit('message',message);
-  })
+    socket.on('message',function(message){
+      logger.debug("[s p a c e syncer|server socket.io] says: someone sent a MESSAGE message : ");
+      socket.emit('message',message);
+      socket.broadcast.emit('message',message);
+    })
+    socket.on('heartbeat',function(message){
+      logger.debug("[s p a c e syncer|server socket.io] says: someone sent a HEARTBEAT: "+message);
+      socket.emit('heartbeat',"space.syncer ALIVE");
+    })
+
     socket.on('disconnect',function(){
       logger.debug("[s p a c e syncer|server socket.io] says: someone disconnected")
     })
