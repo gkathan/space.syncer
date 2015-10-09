@@ -90,10 +90,9 @@ io.on('connection', function (socket) {
       socket.emit('message',message);
       socket.broadcast.emit('message',message);
     })
+
     socket.on('heartbeat',function(message){
       logger.debug("[s p a c e syncer|server socket.io] says: someone sent a HEARTBEAT: "+message);
-
-
       var connected = io.sockets.connected;
   	  clientsCount = Object.keys(connected).length;
       logger.debug("number of connections: "+clientsCount);

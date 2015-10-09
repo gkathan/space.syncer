@@ -94,7 +94,7 @@
 		  "url" : ["http://knbnprxy.ea.bwinparty.corp/rest/members","http://knbnprxy.ea.bwinparty.corp/rest/teams","http://knbnprxy.ea.bwinparty.corp/rest/backlogs","http://knbnprxy.ea.bwinparty.corp/rest/programs"]
 		},
 		"mockup" : {
-			"mode": "off",
+			"mode": "on",
 			"intervalMinutes" :1
 		},
 
