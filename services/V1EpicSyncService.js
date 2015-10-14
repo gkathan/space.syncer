@@ -95,15 +95,23 @@ function _enrichEpics(epics,progress,approved){
 		_e.Targets = _strategicThemes.targets;
 		_e.Customers = _strategicThemes.customers;
 		_e.BusinessBacklogID = _parseObjectID(epics[e].BusinessBacklogID);
-		var _estimateClosed = _.findWhere(progress,{Number:_e.Number})["SubsAndDown:PrimaryWorkitem[AssetState\u003d\u0027Closed\u0027].Estimate.@Sum"];
-		var _estimateAll = _.findWhere(progress,{Number:_e.Number})["SubsAndDown:PrimaryWorkitem[AssetState!\u003d\u0027Dead\u0027].Estimate.@Sum"];
-		var _estimateOpen = _estimateAll-_estimateClosed;
+
+		var _estimateClosed;
+		var _estimateAll;
+		var _estimateOpen;
+
+		var _findEpic = _.findWhere(progress,{Number:_e.Number});
+		if (_findEpic){
+		_estimateClosed = _findEpic["SubsAndDown:PrimaryWorkitem[AssetState\u003d\u0027Closed\u0027].Estimate.@Sum"];
+		_estimateAll = _findEpic["SubsAndDown:PrimaryWorkitem[AssetState!\u003d\u0027Dead\u0027].Estimate.@Sum"];
+		_estimateOpen = _estimateAll-_estimateClosed;
 		_e.EstimateClosed = parseFloat(_estimateClosed);
 		_e.EstimateOpen = parseFloat(_estimateOpen);
 		_e.Progress = parseFloat(((_estimateClosed/_estimateAll)*100).toFixed(2));
 		epics[e].Product = v1Service.deriveProductFromBacklog(_e.BusinessBacklog);
 		if (_.findWhere(approved,{EpicRef:_e.Number}))
 			_e.IsInLatestApprovedPortfolio=true;
+		}
 	}
 }
 // eg {_oid\u003dScope:10461}
