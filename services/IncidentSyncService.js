@@ -49,7 +49,7 @@ function _sync(url,type,io,callback){
 
 	url+="&sysparm_query=priority<="+config.sync[_syncName].includePriority+"^active=true";
 	logger.debug("...snow API call url: "+url);
-	_getSnowData(url,type,function(err,data){
+	_getSnowData(url,type,io,function(err,data){
 		if (err){
 			logger.error("_getSnowData failed: "+err);
 			callback(err);
@@ -73,7 +73,7 @@ function _sync(url,type,io,callback){
 				if (_incidentsDELTASysIds.length>0){
 					logger.debug("************************  THERE ARE "+_incidentsDELTASysIds.length+" INCIDENTS WHICH NEEDS TO BE C L O S E D   ***********************************");
 				}
-				_handleClosedIncidents(_incidentsDELTASysIds,type,function(err,closedIncidents){
+				_handleClosedIncidents(_incidentsDELTASysIds,type,io,function(err,closedIncidents){
 					incidentsNEWSysIds = _.pluck(closedIncidents,'sysId');
 					// so now we have the to be closed again in the NEW list
 					_incidentsNEW = _incidentsNEW.concat(closedIncidents);
@@ -293,14 +293,14 @@ function _calculateDiff(_incidentsNEW,_incidentsOLD,_incidentsDELTA_CHANGED){
 /** in case that an incidnet is closed - we have to derive this from the inverse delta
 * accessing incdeints by sysID = https://bwinparty.service-now.com/ess/incident_list.do?JSONv2&sysparm_action=getRecords&sysparm_sys_id=23cc7cb90f2bbd0052fb0eece1050e44
 */
-function _handleClosedIncidents(deltaIds,type,callback){
+function _handleClosedIncidents(deltaIds,type,io,callback){
 	var async = require('async');
 	if (deltaIds){
 		var _list = [];
 		logger.debug("++++++++++++++++++++++++++++ "+deltaIds.length+" CLOSED INCIDENTS ++++++++++++++++++++++++++++++++++++++++");
 		async.each(deltaIds, function(_sysId, done) {
 			var _url =config.sync[_syncName].url+"&sysparm_sys_id="+_sysId;
-			_getSnowData(_url,type,function(err,data){
+			_getSnowData(_url,type,io,function(err,data){
 				logger.debug("+++ _getSnowData : url = "+_url);
 				if (err){
 					logger.error("error: "+err.message);
@@ -494,7 +494,7 @@ function _getTimeStringForTimeRange(start,stop){
 }
 
 
-function _getSnowData(url,type,callback){
+function _getSnowData(url,type,io,callback){
 	var _syncStatus = spaceServices.SyncService;
 	var _timestamp = new Date();
 	var _statusERROR = "[ERROR]";
