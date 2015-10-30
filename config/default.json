@@ -109,13 +109,13 @@
 			"includePriority" : 4,
 			"url" : "https://bwinparty.service-now.com/incident_list.do?JSONv2&sysparm_action=getRecords"
 		},
-		"soc_outages" : {
+		"socoutages" : {
 			"mode": "on",
 			"intervalMinutes" :60,
 			"url" : "http://avreport.bwinparty.corp/API/AvReportingService.svc/GetIncidentsDatapoints/?from=2014-01-01"
 		},
 
-		"soc_services" : {
+		"socservices" : {
 			"mode": "off",
 			"intervalMinutes" :3600,
 			"url" : "http://avreport.bwinparty.corp/API/AvReportingService.svc/GetServicesDatapoints"

@@ -72,13 +72,13 @@ io.on('connection', function (socket) {
             if (!err) logger.debug("successful: "+_syncer);
           });
           break;
-        case "soc_outages":
-          soc_outagesSyncService.sync(_url,_type,io,function(err,result){
+        case "socoutages":
+          socoutagesSyncService.sync(_url,_type,io,function(err,result){
             if (!err) logger.debug("successful: "+_syncer);
           });
           break;
-        case "soc_services":
-          soc_servicesSyncService.sync("soc_services",_url,_type,io,function(err,result){
+        case "socservices":
+          socservicesSyncService.sync("socservices",_url,_type,io,function(err,result){
             if (!err) logger.debug("successful: "+_syncer);
           });
           break;
@@ -162,23 +162,23 @@ incidentSyncService.init(io,function(err,result){
   }
 });
 
-var soc_outagesSyncService = require('./services/SOCOutagesSyncService');
-soc_outagesSyncService.init(io,function(err,data){
+var socoutagesSyncService = require('./services/SOCOutagesSyncService');
+socoutagesSyncService.init(io,function(err,data){
     if (err){
         logger.error("error: "+err.message);
     }
     else{
-      logger.debug("soc_outagesSyncService.init() says: "+data.length+" items synced");
+      logger.debug("socoutagesSyncService.init() says: "+data.length+" items synced");
     }
 });
 
-var soc_servicesSyncService = require('./services/GenericSyncService');
-soc_servicesSyncService.init(io,"soc_services",function(err, data){
+var socservicesSyncService = require('./services/GenericSyncService');
+socservicesSyncService.init(io,"socservices",function(err, data){
   if (err){
       logger.error("error: "+err.message);
   }
   else{
-    logger.debug("soc_servicesSyncService.init() says: "+data.length+" items synced");
+    logger.debug("socservicesSyncService.init() says: "+data.length+" items synced");
   }
 });
 

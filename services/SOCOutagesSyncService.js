@@ -15,7 +15,7 @@ var db = mongojs(connection_string, [DB]);
 var winston = require('winston');
 var logger = winston.loggers.get('space_log');
 
-var _syncName = "soc_outages";
+var _syncName = "socoutages";
 
 var spaceServices = require('space.services');
 
@@ -104,7 +104,7 @@ function _sync(url,type,io,callback){
 					_syncStatus.saveLastSync(_syncName,_timestamp,_message,_statusERROR,type);
 				}
 				if(success){
-					var _message = "sync soc_outages [DONE]: "+socOutages.length+" items";
+					var _message = "sync socoutages [DONE]: "+socOutages.length+" items";
 					logger.info(_message);
 					io.emit('syncUpdate', {status:"[SUCCESS]",from:_syncName,timestamp:_timestamp,info:socOutages.length+" items",type:type});
 					_syncStatus.saveLastSync(_syncName,_timestamp,_message,_statusSUCCESS,type);
