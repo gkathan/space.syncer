@@ -18,6 +18,9 @@ var _syncName = "v1data";
 var spaceServices = require('space.services');
 
 var v1Service = spaceServices.V1Service;
+var orgService = spaceServices.OrganizationService;
+
+
 var async = require('async');
 
 exports.sync = _sync;
@@ -52,59 +55,58 @@ function _sync(url,type,io,callback){
 
 	var _cache ={};
 
+	orgService.findEmployees(function(err,employees){
 	// needed to join capacity config to backlog data
-	v1Service.findBacklogsCapacity(function(err,backlogscapacity){
-		logger.debug("---------------------------- backlogscapacity: "+backlogscapacity.length);
-		async.eachSeries(url,function(_url,done){
-			//var _url = url[0];
-				fetch(_url)
-				  .then(function(res) {
-				       return res.json();
-				  }).then(function(_data) {
+		v1Service.findBacklogsCapacity(function(err,backlogscapacity){
+			logger.debug("---------------------------- backlogscapacity: "+backlogscapacity.length);
+			async.eachSeries(url,function(_url,done){
+				//var _url = url[0];
+					fetch(_url)
+					  .then(function(res) {
+					       return res.json();
+					  }).then(function(_data) {
 
-				logger.debug(">>>> calling "+_url);
-				//var _data = JSON.parse(data);
-				var _collection = "v1"+_.last(_url.split("/"));
-				_cache[_collection]=_data;
+					logger.debug(">>>> calling "+_url);
+					//var _data = JSON.parse(data);
+					var _collection = "v1"+_.last(_url.split("/"));
+					_cache[_collection]=_data;
 
-				var v1data =  db.collection(_collection);
-				if (_collection=="v1teams"){
-					_data = _enrichTeamData(_data,_cache.v1members);
-				}
-				if (_collection=="v1members"){
-					_data = _enrichMemberData(_data);
-				}
-				if (_collection=="v1backlogs"){
-					_data = _enrichBacklogData(_data,backlogscapacity);
-				}
+					var v1data =  db.collection(_collection);
+					if (_collection=="v1teams"){
+						_data = _enrichTeamData(_data,_cache.v1members);
+					}
+					if (_collection=="v1members"){
+						_data = _enrichMemberData(_data,employees);
+					}
+					if (_collection=="v1backlogs"){
+						_data = _enrichBacklogData(_data,backlogscapacity);
+					}
 
-
-
-				v1data.drop();
-				v1data.insert(_data, function(err , success){
-					//console.log('Response success '+success);
-					if (err) callback(err);
-					logger.debug(">>>> DONE ???? "+_collection+ " - inserted: "+_data.length+" items");
-					done();
+					v1data.drop();
+					v1data.insert(_data, function(err , success){
+						//console.log('Response success '+success);
+						if (err) callback(err);
+						logger.debug(">>>> DONE ???? "+_collection+ " - inserted: "+_data.length+" items");
+						done();
+					});
+				})
+					},function(err,result){
+						//
+						if (err) {
+							logger.error('Response error '+err.message);
+							var _message = err.message;
+							logger.warn('[V1DataSyncService] says: something went wrong on the request', err.request.options,err.message);
+							io.emit('syncUpdate', {status:"[ERROR]",from:_syncName,timestamp:_timestamp,info:err.message,type:type});
+							_syncStatus.saveLastSync(_syncName,_timestamp,_message,_statusERROR,type);
+							callback(err);
+						}
+						var _message = "v1Data sync "+url.join(", ")+" [DONE]: ";
+						logger.info(_message);
+						io.emit('syncUpdate', {status:"[SUCCESS]",from:_syncName,timestamp:_timestamp,info:_message,type:type});
+						_syncStatus.saveLastSync(_syncName,_timestamp,_message,_statusSUCCESS,type);
+						callback(null,_message)
 				});
 			})
-				},function(err,result){
-					//
-					if (err) {
-						logger.error('Response error '+err.message);
-						var _message = err.message;
-						logger.warn('[V1DataSyncService] says: something went wrong on the request', err.request.options,err.message);
-						io.emit('syncUpdate', {status:"[ERROR]",from:_syncName,timestamp:_timestamp,info:err.message,type:type});
-						_syncStatus.saveLastSync(_syncName,_timestamp,_message,_statusERROR,type);
-						callback(err);
-					}
-					var _message = "v1Data sync "+url.join(", ")+" [DONE]: ";
-					logger.info(_message);
-					io.emit('syncUpdate', {status:"[SUCCESS]",from:_syncName,timestamp:_timestamp,info:_message,type:type});
-					_syncStatus.saveLastSync(_syncName,_timestamp,_message,_statusSUCCESS,type);
-					callback(null,_message)
-			});
-
 	});
 }
 
@@ -118,10 +120,21 @@ function _enrichTeamData(teams,members){
 	return teams;
 }
 
-function _enrichMemberData(members){
+function _enrichMemberData(members,employees){
 	for (var i in members){
 		var _member =members[i];
 		_member.ParticipatesIn= _parseParticipatesIn(_member.ParticipatesIn);
+
+		// currently there is a leading "M" in the employeenumbers....
+		if (_.startsWith(_member.EmployeeId, 'M')){
+				_member.EmployeeId= _.rest(_member.EmployeeId).join("");
+		}
+
+
+		var _employee = _.findWhere(employees,{"Employee Number":_member.EmployeeId});
+		if (_employee){
+			_member.JobFamily = _employee["Job Family"];
+		}
 	}
 	return members;
 }
@@ -159,7 +172,7 @@ function _parseParticipants(participantString,members){
 		var _oid = _.initial(_slices[s].split(":")[1]).join("");
 		var _member = _.findWhere(members,{ID:"Member:"+_oid});
 		if (_member){
-			_participants.push({ID:_member.ID,Name:_member.Name,Email:_member.Email});
+			_participants.push({ID:_member.ID,Name:_member.Name,Email:_member.Email,EmployeeId:_member.EmployeeId,JobFamily:_member.JobFamily});
 		}
 	}
 	return _participants;
