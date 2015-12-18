@@ -52,10 +52,12 @@ function _sync(url,type,io,callback){
 
 	var Client = require('node-rest-client').Client;
 	var _options = {};
+	/*
 	if (config.proxy){
 		_options.proxy = config.proxy;
 		_options.proxy.tunnel=false;
 	}
+	*/
 	client = new Client(_options);// direct way
 
 
