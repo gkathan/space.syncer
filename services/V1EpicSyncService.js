@@ -88,6 +88,7 @@ function _sync(url,type,io,callback){
 
 
 function _enrichEpics(epics,progress,approved){
+	console.log("--------------- approved list passed to _enrichEpics: "+JSON.stringify(approved));
 	for (var e in epics){
 		var _e = epics[e];
 		var _strategicThemes = _parseStrategicThemes(_e.StrategicThemesNames);
@@ -102,15 +103,25 @@ function _enrichEpics(epics,progress,approved){
 
 		var _findEpic = _.findWhere(progress,{Number:_e.Number});
 		if (_findEpic){
-		_estimateClosed = _findEpic["SubsAndDown:PrimaryWorkitem[AssetState\u003d\u0027Closed\u0027].Estimate.@Sum"];
-		_estimateAll = _findEpic["SubsAndDown:PrimaryWorkitem[AssetState!\u003d\u0027Dead\u0027].Estimate.@Sum"];
-		_estimateOpen = _estimateAll-_estimateClosed;
-		_e.EstimateClosed = parseFloat(_estimateClosed);
-		_e.EstimateOpen = parseFloat(_estimateOpen);
-		_e.Progress = parseFloat(((_estimateClosed/_estimateAll)*100).toFixed(2));
-		epics[e].Product = v1Service.deriveProductFromBacklog(_e.BusinessBacklog);
-		if (_.findWhere(approved,{EpicRef:_e.Number}))
-			_e.IsInLatestApprovedPortfolio=true;
+			_estimateClosed = _findEpic["SubsAndDown:PrimaryWorkitem[AssetState\u003d\u0027Closed\u0027].Estimate.@Sum"];
+			_estimateAll = _findEpic["SubsAndDown:PrimaryWorkitem[AssetState!\u003d\u0027Dead\u0027].Estimate.@Sum"];
+			_estimateOpen = _estimateAll-_estimateClosed;
+			_e.EstimateClosed = parseFloat(_estimateClosed);
+			_e.EstimateOpen = parseFloat(_estimateOpen);
+			_e.Progress = parseFloat(((_estimateClosed/_estimateAll)*100).toFixed(2));
+			epics[e].Product = v1Service.deriveProductFromBacklog(_e.BusinessBacklog);
+
+			// additional info from peter supplied by biweekly portfoliogate excel import
+			var _approvedItem=_.findWhere(approved,{EpicRef:_e.Number});
+			if (_approvedItem){
+				_e.IsInLatestApprovedPortfolio=true;
+				console.log("***** approved: "+JSON.stringify(_approvedItem));
+				_e.Project= _approvedItem.Project;
+				_e.Product= _approvedItem.Product;
+				_e.LastReportedLaunchDate= _approvedItem["Last reported Launch Date"];
+				_e.LastReportedEndDate= _approvedItem["Last reported End Date"];
+				_e.LastReportedHealth= _approvedItem["Last Reported RAG"]; 
+			}
 		}
 	}
 }
