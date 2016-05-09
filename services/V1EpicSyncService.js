@@ -118,9 +118,10 @@ function _enrichEpics(epics,progress,approved){
 				console.log("***** approved: "+JSON.stringify(_approvedItem));
 				_e.Project= _approvedItem.Project;
 				_e.Product= _approvedItem.Product;
+				_e.Sort = _approvedItem.Sort;
 				_e.LastReportedLaunchDate= _approvedItem["Last reported Launch Date"];
 				_e.LastReportedEndDate= _approvedItem["Last reported End Date"];
-				_e.LastReportedHealth= _approvedItem["Last Reported RAG"]; 
+				_e.LastReportedHealth= _approvedItem["Last Reported RAG"];
 			}
 		}
 	}
